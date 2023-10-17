@@ -1,1 +1,4 @@
 org/weingaertner/fun/sudoku/model/GridTest.class
+org/weingaertner/fun/sudoku/solver/RecursiveSolverTest.class
+org/weingaertner/fun/sudoku/model/GridConstraintsTest.class
+org/weingaertner/fun/sudoku/solver/IterativeSolverTest.class

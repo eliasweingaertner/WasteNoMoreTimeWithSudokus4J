@@ -1,33 +1,37 @@
 package org.weingaertner.fun.sudoku.model;
 
+import lombok.AllArgsConstructor;
+import lombok.Data;
 import lombok.Getter;
+import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 
 import java.io.StringReader;
 import java.util.List;
+import java.util.Objects;
 
 @Slf4j
+@AllArgsConstructor
 public class Grid {
     @Getter
     private final int size;
     @Getter
     private byte[][] numbers;
 
-    public Grid(int size) {
-        this.size = size;
-        numbers = new byte[size][size];
-    }
-
-    public byte[][] clone() {
+    public Grid clone() {
         byte[][] clone = new byte[size][size];
-        for (int i = 0; i < size; i++) {
-            System.arraycopy(numbers[i], 0, clone[i], 0, size);
 
+        for (int row = 0; row < size; row++) {
+            for (int col = 0; col < size; col++) {
+                clone[row][col] = this.numbers[row][col];
+            }
         }
-        return clone;
+
+        return new Grid(size, clone);
     }
+
 
     public void set(int row, int column, byte value) {
         numbers[row][column] = value;
@@ -35,6 +39,17 @@ public class Grid {
 
     public byte get(int row, int column) {
         return numbers[row][column];
+    }
+
+    public GridCoordinates nextEmptyField() {
+        for (int row = 0; row < getSize(); row++) {
+            for (int col = 0; col < getSize(); col++) {
+                if (get(row, col) == 0) {
+                    return new GridCoordinates(row, col);
+                }
+            }
+        }
+        return null;
     }
 
     public String toString() {
@@ -56,7 +71,7 @@ public class Grid {
         List<String> lines = IOUtils.readLines(new StringReader(s));
         int size = Byte.parseByte(lines.get(0));
         lines.remove(0);
-        Grid grid = new Grid(size);
+        Grid grid = new Grid(size, new byte[size][size]);
         int row = 0;
         for (String line : lines) {
             for (int column = 0; column < size; column++) {
@@ -76,6 +91,18 @@ public class Grid {
         }
         return grid;
 
+    }
+
+    public boolean isCompletelyFilled() {
+        return Objects.isNull(nextEmptyField());
+    }
+
+    @Data
+    @AllArgsConstructor
+    @ToString
+    public class GridCoordinates {
+        int row;
+        int col;
     }
 
 }

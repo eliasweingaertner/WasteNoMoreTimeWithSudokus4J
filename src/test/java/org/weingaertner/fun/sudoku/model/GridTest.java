@@ -20,6 +20,8 @@ public class GridTest {
         assertEquals(0,grid.get(0,0));
         assertEquals(7,grid.get(8,0));
         log.info("Grid parsed: \n{}", grid.toString());
+
+        log.info("First emptyField: {}", grid.nextEmptyField());
     }
 
 }
