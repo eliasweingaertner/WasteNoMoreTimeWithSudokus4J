@@ -1,4 +1,4 @@
-#WNMTSS4J - a small but effiecient sudoku solver in Java
+# WNMTSS4J - a small but effiecient sudoku solver in Java
 
 ## Introduction
 Life is short. _Waste No More Time Solving Sudokus for Java (WNMTSS4J)_ does exactly what its name says: It allows you
