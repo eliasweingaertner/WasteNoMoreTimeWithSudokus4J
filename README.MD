@@ -32,6 +32,7 @@ X4XX5XX36
 7X3X18XXX
 ```
 
+
 **X** denotes a blank field in the sudoku.
 
 **Digits** obviously are used to mark given numbers.
@@ -39,7 +40,10 @@ X4XX5XX36
 **9**: The first line corresponds to the grid size. For Sudokus, this has to be set to 9. In the future, this
 program might also support other grid sizes, for example hexadokus (16). 
 
-## Some chatter about the algorithm
+The example above is the [`wildcatjan17` example](https://sandiway.arizona.edu/sudoku/examples.html), originally
+published by Arizona Daily Wildcat on Tuesday, Jan 17th 2006.
+
+## Some chatter about the algorithms
 
 The solver can be run in a recursive (depth-first search, default) or iterative mode. 
 The iterative mode can be turned on using the optional `--iterative` command line option.
