@@ -9,12 +9,10 @@ The actual motivation behind this tool were numerous [Geocaches](http://www.geoc
 
 ## How to run it
 
-1. Build this project using maven, using `mvn clean install`
-2. You'll find a `jar` file in the target folder
-3. Run the solver by providing a sudoku file as text file:
+1. Get the JAR file from the Github [releases](/releases) page. Alternatively, build this project using maven, using `mvn clean install`. You'll find a `jar` file in the target folder in this case.
+2. Run the solver by providing a sudoku file as text file:
    
-
-   ```java -jar target/sudoku-0.0.1-jar-with-dependencies.jar ~/sudoku-files/wildcat1.txt```
+```java -jar target/sudoku-0.0.1-jar-with-dependencies.jar ~/sudoku-files/wildcat1.txt```
 
 ## Sudoku File Format
 The solver uses the following file format:
