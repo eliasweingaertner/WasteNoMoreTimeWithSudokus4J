@@ -6,14 +6,12 @@ import com.beust.jcommander.ParameterException;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.IOUtils;
 import org.weingaertner.fun.sudoku.model.Grid;
 import org.weingaertner.fun.sudoku.solver.IterativeSolver;
 import org.weingaertner.fun.sudoku.solver.RecursiveSolver;
 import org.weingaertner.fun.sudoku.solver.Solver;
 
 import java.io.File;
-import java.io.FileReader;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.nio.charset.StandardCharsets;
