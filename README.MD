@@ -1,9 +1,9 @@
-# WNMTSS4J - a small but effiecient sudoku solver in Java
+# WNMTSS4J - a small sudoku solver in Java
 
 ## Introduction
 Life is short. _Waste No More Time Solving Sudokus for Java (WNMTSS4J)_ does exactly what its name says: It allows you
-to solve these riddles very quickly. The computation takes only a few milliseconds
-for common sudokus, and only a few for the most complex sudukos that have ever been designed.
+to solve these riddles rather quickly. The computation takes only a few milliseconds
+for common sudoku. The most complex sudukos that have ever been designed can also be solved in very few seconds.
 
 The actual motivation behind this tool were numerous [Geocaches](http://www.geocaching.com) which require a Sudoku to be solved.
 
