@@ -10,5 +10,15 @@ public interface Solver {
      */
     Grid solve(Grid partialGrid);
 
+    /**
+     * Time needed for the solver execution in milliseconds
+     * @return processing time in miliseconds
+     */
     Long getSolvingTime();
+
+    /**
+     * Number of solver iterations
+     * @return
+     */
+    int getIterations();
 }

@@ -85,10 +85,12 @@ public class SolverMain {
 
         if (Objects.nonNull(solution)) {
             log.info("Solution found: \n{}", solution.toString());
-            log.info("Solution time: {}ms", sudokuSolver.getSolvingTime());
+            log.info("Iterations needed: {}",sudokuSolver.getIterations());
         } else {
-            log.info("No solution found");
+            log.info("No solution found after {} iterations", sudokuSolver.getIterations());
         }
+        log.info("Time needed: {}ms", sudokuSolver.getSolvingTime());
+
 
     }
 }

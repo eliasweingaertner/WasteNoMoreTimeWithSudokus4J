@@ -1,3 +1,4 @@
+org/weingaertner/fun/sudoku/model/BitUtils.class
 org/weingaertner/fun/sudoku/model/Grid.class
 org/weingaertner/fun/sudoku/solver/IterativeSolver.class
 org/weingaertner/fun/sudoku/solver/Solver.class

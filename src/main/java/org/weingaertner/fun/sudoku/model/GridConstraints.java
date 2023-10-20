@@ -3,61 +3,79 @@ package org.weingaertner.fun.sudoku.model;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
-import java.util.Arrays;
-import java.util.BitSet;
 import java.util.HashSet;
 import java.util.Set;
 
-
 @AllArgsConstructor
 @Slf4j
+/**
+ * Models the constraints in a sudoku grid
+ */
 public class GridConstraints extends Object{
 
     private final int gridSize;
     private final int subspaceSize;
 
-    private BitSet[] rowConstraints;
-    private BitSet[] columnConstraints;
-    private BitSet[] subsquareConstraints;
+    private int[] rowConstraints;
+    private int[] columnConstraints;
+    private int[] subsquareConstraints;
 
-    public BitSet getRowConstraint(int row) {
+    public int getRowConstraint(int row) {
         return rowConstraints[row];
     }
 
-    public BitSet getColumnConstraint(int col) {
+    public int getColumnConstraint(int col) {
         return columnConstraints[col];
     }
 
-    public BitSet getSubSquareConstraint(int row, int col) {
-        int index=(Math.floorDiv(row,subspaceSize))*subspaceSize+(Math.floorDiv(col,subspaceSize));
+    public int getSubSquareConstraint(int row, int col) {
+        int index = getSubsquareIndex(row, col);
         return subsquareConstraints[index];
     }
 
+    private int getSubsquareIndex(int row, int col) {
+        int index=(Math.floorDiv(row,subspaceSize))*subspaceSize+(Math.floorDiv(col,subspaceSize));
+        return index;
+    }
 
+    public int getAppliedContstaintsForField(int row, int col) {
+        int rowConstraint= getRowConstraint(row);
+        int colConstraint = getColumnConstraint(col);
+        int subspaceConstraint = getSubSquareConstraint(row,col);
 
-    public BitSet getAppliedContstaintsForField(int row, int col) {
-        BitSet result = (BitSet) getRowConstraint(row).clone();
+        int result = rowConstraint | colConstraint | subspaceConstraint;
 
-        BitSet columnConstraint = getColumnConstraint(col);
-        result.or(columnConstraint);
-
-        BitSet subspaceConstraint = getSubSquareConstraint(row,col);
-        result.or(subspaceConstraint);
         return result;
     }
 
+    public GridConstraints getUpdatedGridContraints(int row, int col, int value) {
+        int[] clonedRowConstraints = new int[gridSize];
+        int[] clonedColumnConstraints = new int[gridSize];
+        int[] clonedSubsquareConstraints = new int[gridSize];
+
+        System.arraycopy(rowConstraints,0,clonedRowConstraints,0,rowConstraints.length);
+        System.arraycopy(columnConstraints,0,clonedColumnConstraints,0,columnConstraints.length);
+        System.arraycopy(subsquareConstraints,0,clonedSubsquareConstraints,0,subsquareConstraints.length);
+
+        clonedRowConstraints[row] = BitUtils.setNthBitInInt(rowConstraints[row],value);
+        clonedColumnConstraints[col] = BitUtils.setNthBitInInt(columnConstraints[col],value);
+        int subgridIndex = getSubsquareIndex(row,col);
+        clonedSubsquareConstraints[subgridIndex] = BitUtils.setNthBitInInt(subsquareConstraints[subgridIndex],value);
+
+        return new GridConstraints(gridSize,subspaceSize,clonedRowConstraints,clonedColumnConstraints, clonedSubsquareConstraints);
+
+    }
+
     public Set<Byte> getPossibleValuesForField(int row, int col) {
-        BitSet allConstraints = getAppliedContstaintsForField(row,col);
+        int allConstraints = getAppliedContstaintsForField(row,col);
         int index=0;
         HashSet<Byte> result=new HashSet();
 
-        do {
-            index=allConstraints.nextClearBit(index);
-            if (index<gridSize+1) {
-                result.add((byte) index); //Bitset returns indexes out of range due to its internal implementation
+        for (byte i=0;i<gridSize+1;i++) {
+            if (!BitUtils.isBitSet(allConstraints,i)) {
+                result.add(i);
             }
-            index=index+1;
-        } while (index<gridSize+1);
+        }
 
         return result;
     }
@@ -65,21 +83,23 @@ public class GridConstraints extends Object{
     public static GridConstraints fromGrid(Grid grid) {
         int size = grid.getSize();
 
-        BitSet[] rowConstraints = new BitSet[size];
-        BitSet[] columnConstraints = new BitSet[size];
-        BitSet[] subsquareConstraints = new BitSet[size];
+        int[] rowConstraints = new int[size];
+        int[] columnConstraints = new int[size];
+        int[] subsquareConstraints = new int[size];
 
         //Initialize Row and Column constraints
         for (int k=0;k<size;k++) {
 
-            rowConstraints[k] = new BitSet(size+1);
+            rowConstraints[k] = 0;
             for (int l=0;l<size;l++) {
-                rowConstraints[k].set(grid.get(k, l));
+                int bitToSet = grid.get(k, l);
+                rowConstraints[k]= BitUtils.setNthBitInInt(rowConstraints[k],bitToSet);
             }
 
-            columnConstraints[k] = new BitSet(size+1);
+            columnConstraints[k] = 0;
             for (int l=0;l<size;l++) {
-                columnConstraints[k].set(grid.get(l, k));
+                int bitToSet=grid.get(l, k);
+                columnConstraints[k]= BitUtils.setNthBitInInt(columnConstraints[k],bitToSet);
             }
 
         }
@@ -89,10 +109,11 @@ public class GridConstraints extends Object{
         int subSquare=0;
         for (int subRowOffset=0;subRowOffset<size;subRowOffset=subRowOffset+subsquareSize) {
             for (int subColOffset=0;subColOffset<size;subColOffset=subColOffset+subsquareSize) {
-                subsquareConstraints[subSquare] = new BitSet(size+1);
+                subsquareConstraints[subSquare] = 0;
                 for (int i=0;i<subsquareSize;i++) {
                     for (int j=0;j<subsquareSize;j++) {
-                        subsquareConstraints[subSquare].set(grid.get(subRowOffset+i,subColOffset+j));
+                        int bitToSet = grid.get(subRowOffset+i,subColOffset+j);
+                        subsquareConstraints[subSquare]= BitUtils.setNthBitInInt(subsquareConstraints[subSquare],bitToSet);
                     }
                 }
                 subSquare++;
@@ -106,21 +127,35 @@ public class GridConstraints extends Object{
     public String toString() {
 
         String result = "Row Constraints: ";
-        for (BitSet rowConstraint : rowConstraints) {
-            result = result + rowConstraint;
+        for (int rowConstraint : rowConstraints) {
+            result = result + toConstraintString(rowConstraint);
         }
 
         result = result+ "\nColumn Constraints: ";
-        for (BitSet colConst : columnConstraints) {
-            result = result + colConst;
+        for (int colConst : columnConstraints) {
+            result = result + toConstraintString(colConst);
         }
 
         result = result+ "\nSubsquare Constraints: ";
-        for (BitSet subconst : subsquareConstraints) {
-            result = result + subconst;
+        for (int subconst : subsquareConstraints) {
+            result = result + toConstraintString(subconst);
         }
 
         return result;
+    }
+
+    private String toConstraintString(int constraint) {
+
+        Set<Integer> setBits = new HashSet<>();
+
+        for (int i=0;i<gridSize+1;i++) {
+            if (BitUtils.isBitSet(constraint,i)) {
+                setBits.add(i);
+            }
+        }
+
+        return setBits.toString();
+
     }
 
 }

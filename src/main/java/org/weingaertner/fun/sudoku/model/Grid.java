@@ -1,9 +1,6 @@
 package org.weingaertner.fun.sudoku.model;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.Getter;
-import lombok.ToString;
+import lombok.*;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.math.NumberUtils;
@@ -13,40 +10,49 @@ import java.util.List;
 import java.util.Objects;
 
 @Slf4j
-@AllArgsConstructor
+/**
+ * This class models a Sudoku Grid
+ */
 public class Grid {
     @Getter
     private final int size;
     @Getter
-    private byte[][] numbers;
+    private byte[] numbers;
+
+    @Getter
+    @Setter
+    private GridConstraints gridConstraints;
+
+    public Grid(int size) {
+        numbers =new byte[size*size];
+        this.size = size;
+    }
+
+    public Grid(int size, byte[] data) {
+        this.size = size;
+        numbers = data;
+    }
 
     public Grid clone() {
-        byte[][] clone = new byte[size][size];
-
-        for (int row = 0; row < size; row++) {
-            for (int col = 0; col < size; col++) {
-                clone[row][col] = this.numbers[row][col];
-            }
-        }
-
+        byte[] clone = new byte[size*size];
+        System.arraycopy(numbers,0,clone,0,numbers.length);
         return new Grid(size, clone);
     }
 
-
     public void set(int row, int column, byte value) {
-        numbers[row][column] = value;
+        numbers[row*size+column] = value;
     }
 
     public byte get(int row, int column) {
-        return numbers[row][column];
+        return numbers[row*size+column];
     }
 
     public GridCoordinates nextEmptyField() {
-        for (int row = 0; row < getSize(); row++) {
-            for (int col = 0; col < getSize(); col++) {
-                if (get(row, col) == 0) {
-                    return new GridCoordinates(row, col);
-                }
+        for (int i=0;i<numbers.length;i++) {
+            if (numbers[i]==0) {
+                int row = i/getSize();
+                int col = i%getSize();
+                return new GridCoordinates(row,col);
             }
         }
         return null;
@@ -58,7 +64,7 @@ public class Grid {
         for (int row = 0; row < size; row++) {
             String rowLine = "";
             for (int column = 0; column < size; column++) {
-                String value = (this.numbers[row][column] != 0) ? Byte.toString(this.numbers[row][column]) : " ";
+                String value = get(row,column) != 0 ? Byte.toString(get(row,column)) : " ";
                 rowLine = rowLine + "| " + value + " ";
             }
             result = result + rowLine + "|\n";
@@ -71,7 +77,7 @@ public class Grid {
         List<String> lines = IOUtils.readLines(new StringReader(s));
         int size = Byte.parseByte(lines.get(0));
         lines.remove(0);
-        Grid grid = new Grid(size, new byte[size][size]);
+        Grid grid = new Grid(size);
         int row = 0;
         for (String line : lines) {
             for (int column = 0; column < size; column++) {

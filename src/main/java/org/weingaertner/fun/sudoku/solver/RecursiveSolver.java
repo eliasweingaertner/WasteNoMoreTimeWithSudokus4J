@@ -11,7 +11,6 @@ import java.util.Set;
 @Slf4j
 public class RecursiveSolver implements Solver{
 
-    @Getter
     int iterations;
     @Getter
     int maxDepth;
@@ -27,7 +26,9 @@ public class RecursiveSolver implements Solver{
         this.deadEnds=0;
 
         long timeStarted = System.currentTimeMillis();
-        Grid result =  solve(partialGrid,0);
+        GridConstraints gridConstraints = GridConstraints.fromGrid(partialGrid);
+        partialGrid.setGridConstraints(gridConstraints);
+        Grid result =  solve(partialGrid, 0);
         solvingTime = System.currentTimeMillis()-timeStarted;
 
         return result;
@@ -38,8 +39,13 @@ public class RecursiveSolver implements Solver{
         return solvingTime;
     }
 
+    @Override
+    public int getIterations() {
+        return iterations;
+    }
 
-    public Grid solve(Grid partialGrid, int depth) {
+
+    public Grid solve(Grid partialGrid,  int depth) {
 
         iterations++;
 
@@ -52,7 +58,7 @@ public class RecursiveSolver implements Solver{
         }
 
         Grid.GridCoordinates nextEmptyField = partialGrid.nextEmptyField();
-        GridConstraints gridConstraints = GridConstraints.fromGrid(partialGrid);
+        GridConstraints gridConstraints = partialGrid.getGridConstraints();
         Set<Byte> possibleFieldValues = gridConstraints.getPossibleValuesForField(nextEmptyField.getRow(), nextEmptyField.getCol());
 
         int nextDepth=depth+1;
@@ -60,6 +66,8 @@ public class RecursiveSolver implements Solver{
         for (Byte possibleValue: possibleFieldValues) {
             Grid nextGrid = partialGrid.clone();
             nextGrid.set(nextEmptyField.getRow(), nextEmptyField.getCol(),possibleValue);
+            GridConstraints nextGridContstaints = gridConstraints.getUpdatedGridContraints(nextEmptyField.getRow(),nextEmptyField.getCol(),possibleValue);
+            nextGrid.setGridConstraints(nextGridContstaints);
             Grid found = solve(nextGrid,nextDepth);
             if (Objects.nonNull(found)) {
                 return found;

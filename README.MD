@@ -50,7 +50,7 @@ outperforms recursive search for specific sudokus that have been designed to att
 
 Both algorithms use constraint propagation to limit the search space: Instead of
 blindly trying out a lot of numbers, both solvers always construct valid partial sudoku grids. To do
-so, it uses BitSets to efficiently model the numbers already taken in the current row, column and subgrid.
-Using bitwise OR between these constraints, we can efficiently decide which numbers are left
+so, it uses bitvectors (represented as integer values) to efficiently model the numbers already taken in the current row, column and subgrid.
+Using bitwise OR between these integer constraints, we can efficiently decide which numbers are left
 for the current cell. If the set of possible values is empty, we have reached a dead end. Otherwise, this
 algorithm simply continues until all cells are filled.

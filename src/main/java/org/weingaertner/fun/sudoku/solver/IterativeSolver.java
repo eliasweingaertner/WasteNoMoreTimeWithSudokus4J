@@ -20,8 +20,11 @@ public class IterativeSolver implements Solver {
     public Grid solve(Grid partialGrid) {
 
         long timeStarted = System.currentTimeMillis();
-
         Stack<Grid> gridStack = new Stack<>();
+
+        GridConstraints partialGridConstraints = GridConstraints.fromGrid(partialGrid);
+        partialGrid.setGridConstraints(partialGridConstraints);
+
         gridStack.add(partialGrid);
 
         while (!gridStack.isEmpty()) {
@@ -33,12 +36,14 @@ public class IterativeSolver implements Solver {
             }
 
             Grid.GridCoordinates nextEmptyField = nextGrid.nextEmptyField();
-            GridConstraints gridConstraints = GridConstraints.fromGrid(nextGrid);
+            GridConstraints gridConstraints = nextGrid.getGridConstraints();
             Set<Byte> possibleFieldValues = gridConstraints.getPossibleValuesForField(nextEmptyField.getRow(), nextEmptyField.getCol());
 
             for (Byte possibleValue : possibleFieldValues) {
                 Grid candidateGrid = nextGrid.clone();
                 candidateGrid.set(nextEmptyField.getRow(), nextEmptyField.getCol(), possibleValue);
+                GridConstraints candidateGridConstraints = gridConstraints.getUpdatedGridContraints(nextEmptyField.getRow(), nextEmptyField.getCol(), possibleValue);
+                candidateGrid.setGridConstraints(candidateGridConstraints);
                 gridStack.push(candidateGrid);
             }
 
@@ -53,6 +58,11 @@ public class IterativeSolver implements Solver {
     @Override
     public Long getSolvingTime() {
         return solvingTime;
+    }
+
+    @Override
+    public int getIterations() {
+        return iterationsNeeded;
     }
 
 }
