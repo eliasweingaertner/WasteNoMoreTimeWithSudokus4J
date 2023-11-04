@@ -45,7 +45,6 @@ public class RecursiveSolver implements Solver{
         return iterations;
     }
 
-
     public Grid solve(Grid partialGrid,  int depth) {
 
         iterations++;
