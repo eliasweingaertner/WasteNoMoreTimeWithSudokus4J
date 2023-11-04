@@ -8,4 +8,9 @@ public class BitUtils {
         int result = constraint | (1 << bit);
         return result;
     }
+
+    public static int unsetNthBitInInt(int constraint, int bit) {
+        int result = constraint & ~(1 << bit);
+        return result;
+    }
 }

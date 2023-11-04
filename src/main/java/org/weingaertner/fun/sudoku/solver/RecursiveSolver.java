@@ -21,6 +21,7 @@ public class RecursiveSolver implements Solver{
 
     @Override
     public Grid solve(Grid partialGrid) {
+
         this.iterations = 0;
         this.maxDepth = 0;
         this.deadEnds=0;
@@ -58,27 +59,32 @@ public class RecursiveSolver implements Solver{
         }
 
         Grid.GridCoordinates nextEmptyField = partialGrid.nextEmptyField();
+        int row = nextEmptyField.getRow();
+        int col = nextEmptyField.getCol();
+
         GridConstraints gridConstraints = partialGrid.getGridConstraints();
-        Set<Byte> possibleFieldValues = gridConstraints.getPossibleValuesForField(nextEmptyField.getRow(), nextEmptyField.getCol());
+        Set<Byte> possibleFieldValues = gridConstraints.getPossibleValuesForField(row, col);
 
         int nextDepth=depth+1;
 
         for (Byte possibleValue: possibleFieldValues) {
-            Grid nextGrid = partialGrid.clone();
-            nextGrid.set(nextEmptyField.getRow(), nextEmptyField.getCol(),possibleValue);
-            GridConstraints nextGridContstaints = gridConstraints.getUpdatedGridContraints(nextEmptyField.getRow(),nextEmptyField.getCol(),possibleValue);
-            nextGrid.setGridConstraints(nextGridContstaints);
-            Grid found = solve(nextGrid,nextDepth);
-            if (Objects.nonNull(found)) {
-                return found;
-            }
 
+            byte oldVal=partialGrid.get(row,col);
+
+            partialGrid.set(row,col,possibleValue);
+            gridConstraints.setValue(row,col,possibleValue);
+            Grid candidate = solve(partialGrid,nextDepth);
+
+            if (Objects.nonNull(candidate)) {
+                return candidate;
+            } else {
+                gridConstraints.unsetValue(row,col,possibleValue);
+                partialGrid.set(row,col,oldVal);
+            }
         }
 
         deadEnds++;
         return null;
-
-
 
     }
 

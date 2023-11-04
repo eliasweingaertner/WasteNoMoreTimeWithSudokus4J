@@ -1,8 +1,0 @@
-org/weingaertner/fun/sudoku/model/BitUtils.class
-org/weingaertner/fun/sudoku/model/Grid.class
-org/weingaertner/fun/sudoku/solver/IterativeSolver.class
-org/weingaertner/fun/sudoku/solver/Solver.class
-org/weingaertner/fun/sudoku/solver/RecursiveSolver.class
-org/weingaertner/fun/sudoku/model/GridConstraints.class
-org/weingaertner/fun/sudoku/SolverMain.class
-org/weingaertner/fun/sudoku/model/Grid$GridCoordinates.class

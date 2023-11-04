@@ -66,6 +66,21 @@ public class GridConstraints extends Object{
 
     }
 
+
+    public void setValue(int row, int col, int value) {
+        this.rowConstraints[row]=BitUtils.setNthBitInInt(this.rowConstraints[row], value);
+        this.columnConstraints[col]=BitUtils.setNthBitInInt(this.columnConstraints[col],value);
+        int subgridIndex = getSubsquareIndex(row,col);
+        this.subsquareConstraints[subgridIndex]=BitUtils.setNthBitInInt(this.subsquareConstraints[subgridIndex],value);
+    }
+
+    public void unsetValue(int row, int col, int value) {
+        this.rowConstraints[row]=BitUtils.unsetNthBitInInt(this.rowConstraints[row], value);
+        this.columnConstraints[col]=BitUtils.unsetNthBitInInt(this.columnConstraints[col],value);
+        int subgridIndex = getSubsquareIndex(row,col);
+        this.subsquareConstraints[subgridIndex]=BitUtils.unsetNthBitInInt(this.subsquareConstraints[subgridIndex],value);
+    }
+
     public Set<Byte> getPossibleValuesForField(int row, int col) {
         int allConstraints = getAppliedContstaintsForField(row,col);
         int index=0;
